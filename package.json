@@ -1,0 +1,49 @@
+{
+  "name": "companyservice",
+  "version": "1.0.0",
+  "description": "Tool to get official and publicly accessible information about companies",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "@types/chai": "^4.3.1",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.13",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^18.6.2",
+    "@typescript-eslint/eslint-plugin": "^5.31.0",
+    "@typescript-eslint/parser": "^5.31.0",
+    "chai": "^4.3.6",
+    "cpy": "^9.0.1",
+    "eslint": "^8.20.0",
+    "mocha": "^10.0.0",
+    "nyc": "^15.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  },
+  "scripts": {
+    "start": "node ./dist/server.js",
+    "test": "mocha --exit --recursive ./dist/test/*",
+    "build": "tsc",
+    "watch": "npm run copyfiles && tsc --watch ",
+    "clean": "rm -rf build",
+    "lint": "node node_modules/eslint/bin/eslint.js --ext .ts,.tsx,.js ./src",
+    "copyfiles": "node ./copyfiles.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kjellrichard/companyservice.git"
+  },
+  "author": "Richard B",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kjellrichard/companyservice/issues"
+  },
+  "homepage": "https://github.com/kjellrichard/companyservice#readme",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "node-fetch": "^3.2.9",
+    "stream-json": "^1.7.4",
+    "tslib": "^2.4.0"
+  }
+}
