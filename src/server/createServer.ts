@@ -33,7 +33,7 @@ app.get('/find', async (req: Request, res: Response) => {
             .send(`Company with name ${query} not found.`)
 })
 
-app.get('/:orgno', async (req: Request, res: Response) => {
+app.get('/no/:orgno', async (req: Request, res: Response) => {
     const orgno = req.params.orgno
     const company = await getCompany(orgno)
     const start = Date.now()
