@@ -1,6 +1,6 @@
 {
   "name": "companyservice",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Tool to get official and publicly accessible information about companies",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,7 +21,7 @@
     "typescript": "^4.7.4"
   },
   "scripts": {
-    "start": "node ./dist/server.js",
+    "start": "node --max-old-space-size=6144 ./dist/server.js",
     "test": "mocha --exit --recursive ./dist/test/*",
     "build": "tsc",
     "watch": "npm run copyfiles && tsc --watch ",

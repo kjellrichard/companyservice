@@ -2,15 +2,12 @@ import { config } from 'dotenv'
 config({ path: './.env-test' })
 
 import { expect } from 'chai'
-import { unzip, getCompanies, searchCompanies } from '../lib/brreg'
+import { unzipUnits, getCompanies, searchCompanies, getRoles } from '../lib/brreg'
 
-
-console.log(process.env.CACHE_DIR)
-console.log(process.env.ALL_UNITS_FILENAME)
 
 describe('brreg', () => {
     it('should extract data to company map', async () => {
-        const data = await unzip({
+        const data = await unzipUnits({
             verbose: true
         })
         expect(data).to.a('map')
@@ -50,6 +47,22 @@ describe('brreg', () => {
         expect(companies.length).to.be.greaterThan(1)
         companies.forEach(company => {
             expect(company.navn.toLowerCase().indexOf('speidergruppe')).to.equal(company.navn.length - 'speidergruppe'.length, 'navn should end with "speidergruppe"')
+        })
+    }).timeout(Infinity)
+
+    it('should get all roles as map', async () => {
+        const roles = await getRoles({ verbose: true })
+        expect(roles).to.be.a('map')
+        expect(roles.size).to.be.greaterThan(100)
+        roles.forEach(role => {
+            expect(role).to.be.an('array')
+            role.forEach(innerRole=>{
+                expect(innerRole.type.kode).to.be.a('string')
+                expect(innerRole.roller).to.be.an('array')
+                innerRole.roller.forEach(realRole=>{
+                    expect(realRole.type.kode).to.be.a('string')
+                })
+            })
         })
     }).timeout(Infinity)
 })

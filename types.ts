@@ -33,4 +33,43 @@ export type NOCompany = {
     registrertIStiftelsesregisteret: boolean
     underAvvikling: boolean
     underTvangsavviklingEllerTvangsopplosning: boolean
+    rollegrupper: NORole[]
+}
+
+export type NOPerson = {
+    fodselsdato: string
+    navn: {
+        fornavn: string
+        etternavn: string
+    }
+    erDoed: boolean
+}
+
+export type NOEnhet = {
+    organisasjonsnummer: string
+    organisasjonsform: {
+        kode: string
+        beskrivelse: string
+    }
+    navn: string[]
+    erSlettet: boolean
+}
+export type NORole = {
+    type: {
+        kode: string
+        beskrivelse: string
+    }
+    sistEndret: string
+    roller: [
+        {
+            type: { 
+                kode: string
+                beskrivelse: string
+            }
+            person?: NOPerson
+            enhet?: NOEnhet
+            fratraadt: boolean
+            rekkefolge: number
+        }
+    ]
 }
