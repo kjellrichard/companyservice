@@ -1,15 +1,18 @@
+export type NOCompanyAddresse = {
+    adresse: string[]
+    kommune: string
+    kommunenummer: string
+    land: string
+    landkode: string
+    postnummer: string
+    poststed: string
+}
+
 export type NOCompany = {
     organisasjonsnummer: string
     antallAnsatte: number
-    forretningsadresse: {
-        adresse: string[]
-        kommune: string
-        kommunenummer: string
-        land: string
-        landkode: string
-        postnummer: string
-        poststed: string
-    }
+    forretningsadresse: NOCompanyAddresse
+    postadresse?: NOCompanyAddresse // one can use postadresse if the company want the mail to go another address than forretningsadresse
     institusjonellSektorkode: {
         kode: string
         beskrivelse: string
@@ -35,7 +38,6 @@ export type NOCompany = {
     underAvvikling: boolean
     underTvangsavviklingEllerTvangsopplosning: boolean
     rollegrupper: NORole[]
-
 }
 
 export type NOPerson = {
