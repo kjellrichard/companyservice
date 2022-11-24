@@ -31,9 +31,11 @@ export type NOCompany = {
     registrertIFrivillighetsregisteret: boolean
     registrertIMvaregisteret: boolean
     registrertIStiftelsesregisteret: boolean
+    stiftelsesdato: string
     underAvvikling: boolean
     underTvangsavviklingEllerTvangsopplosning: boolean
     rollegrupper: NORole[]
+
 }
 
 export type NOPerson = {
@@ -62,7 +64,7 @@ export type NORole = {
     sistEndret: string
     roller: [
         {
-            type: { 
+            type: {
                 kode: string
                 beskrivelse: string
             }

@@ -5,7 +5,6 @@ import { resolve } from 'path'
 import { NOCompany, NORole } from '../../types'
 import zlib from 'zlib'
 import StreamArray from 'stream-json/streamers/StreamArray'
-import { __values } from 'tslib'
 
 
 type BrregDictionary = Map<string, NOCompany>
@@ -31,7 +30,7 @@ type FileParam = {
     filename: string
 }
 
-async function downloadFile(url, filename) : Promise<string> {
+async function downloadFile(url, filename): Promise<string> {
     const file = createWriteStream(filename)
     return new Promise((resolve, reject) => {
         https.get(url, response => {
@@ -65,7 +64,7 @@ export async function downloadRolesFile(): Promise<string> {
 }
 
 
-async function getFile({ verbose,  url, filename }: VerboseParam & FileParam & {url:string}): Promise<string> {
+async function getFile({ verbose, url, filename }: VerboseParam & FileParam & { url: string }): Promise<string> {
     let exists = false
     try {
         const fileinfo = await stat(filename)
@@ -78,7 +77,7 @@ async function getFile({ verbose,  url, filename }: VerboseParam & FileParam & {
     }
 
     if (exists) {
-        verbose && console.log(`Using cached file ${filename}` )
+        verbose && console.log(`Using cached file ${filename}`)
         return ALL_UNITS_FILENAME
     }
     const downloaded = await downloadFile(url, filename)
@@ -87,11 +86,11 @@ async function getFile({ verbose,  url, filename }: VerboseParam & FileParam & {
 }
 
 export async function getUnitsFile({ verbose }: VerboseParam = {}): Promise<string> {
-    return getFile({verbose, url: ALL_UNITS_URL, filename: ALL_UNITS_FILENAME})
+    return getFile({ verbose, url: ALL_UNITS_URL, filename: ALL_UNITS_FILENAME })
 }
 
-export async function getRolesFile({verbose}: VerboseParam = {}): Promise<string> {
-    return getFile({verbose, url: ALL_ROLES_URL, filename: ALL_ROLES_FILENAME})
+export async function getRolesFile({ verbose }: VerboseParam = {}): Promise<string> {
+    return getFile({ verbose, url: ALL_ROLES_URL, filename: ALL_ROLES_FILENAME })
 }
 
 export async function unzipUnits({ filename, verbose }: VerboseParam & { filename?: string }): Promise<BrregDictionary> {
@@ -105,7 +104,7 @@ export async function unzipUnits({ filename, verbose }: VerboseParam & { filenam
         const stream = StreamArray.withParser()
         stream.on('data', async (data) => {
             ++counter
-            const value: NOCompany = removeKey( data.value, 'links')
+            const value: NOCompany = removeKey(data.value, 'links')
             companies.set(value.organisasjonsnummer, value)
 
             if (counter % logInterval === 0) {
@@ -131,17 +130,17 @@ export async function unzipUnits({ filename, verbose }: VerboseParam & { filenam
 }
 
 const removeKey = (obj, key) => obj !== Object(obj) ?
-   obj :
-   Array.isArray(obj) ?
-   obj.map(item => removeKey(item, key)) :
-   Object.keys(obj)
-   .filter(k => k !== key)
-   .reduce((acc, x) => Object.assign(acc, {
-      [x]: removeKey(obj[x], key)
-   }), {});
+    obj :
+    Array.isArray(obj) ?
+        obj.map(item => removeKey(item, key)) :
+        Object.keys(obj)
+            .filter(k => k !== key)
+            .reduce((acc, x) => Object.assign(acc, {
+                [x]: removeKey(obj[x], key)
+            }), {})
 
 
-export async function unzipRoles({ filename, verbose }: VerboseParam & { filename?: string }) : Promise<BrregRoleDictionary> {
+export async function unzipRoles({ filename, verbose }: VerboseParam & { filename?: string }): Promise<BrregRoleDictionary> {
     const fileToRead = filename || ALL_ROLES_FILENAME
     const logInterval = 100000
     let counter = 0
@@ -153,7 +152,7 @@ export async function unzipRoles({ filename, verbose }: VerboseParam & { filenam
         stream.on('data', async (data) => {
             ++counter
             const orgNo = data.value.organisasjonsnummer
-            const value: NORole[] = data.value.rollegrupper.filter(role=>['REVI', 'REGN'].indexOf(role.type.kode) > -1).map(r=>removeKey(r, '_links'))
+            const value: NORole[] = data.value.rollegrupper.filter(role => ['REVI', 'REGN'].indexOf(role.type.kode) > -1).map(r => removeKey(r, '_links'))
             roles.set(orgNo, value)
 
             if (counter % logInterval === 0) {
@@ -196,7 +195,7 @@ export async function init({ verbose }: VerboseParam = {}): Promise<void> {
     await unzipUnits({ verbose })
 }
 
-export async function initRoles({verbose}: VerboseParam ={}): Promise<void> {
+export async function initRoles({ verbose }: VerboseParam = {}): Promise<void> {
     if (roles.size)
         return
     await getRolesFile({ verbose })
@@ -208,8 +207,8 @@ export async function getCompanies({ verbose }: VerboseParam = {}): Promise<Brre
     return companies
 }
 
-export async function getRoles({verbose}:VerboseParam = {}): Promise<BrregRoleDictionary> {
-    await initRoles({verbose})
+export async function getRoles({ verbose }: VerboseParam = {}): Promise<BrregRoleDictionary> {
+    await initRoles({ verbose })
     return roles
 }
 
