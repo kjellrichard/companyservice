@@ -12,6 +12,7 @@ type BrregRoleDictionary = Map<string, NORole[]>
 
 const companies: BrregDictionary = new Map()
 const roles: BrregRoleDictionary = new Map()
+const companiesByName: Map<string, string> = new Map()
 const CACHE_DIR = resolve(process.env.CACHE_DIR || './cache')
 const ALL_UNITS_FILENAME = resolve(CACHE_DIR, process.env.ALL_UNITS_FILENAME || 'all_enheter.json.gz')
 const ALL_ROLES_FILENAME = resolve(CACHE_DIR, process.env.ALL_ROLES_FILENAME || 'all_roller.json.gz')
@@ -106,7 +107,7 @@ export async function unzipUnits({ filename, verbose }: VerboseParam & { filenam
             ++counter
             const value: NOCompany = removeKey(data.value, 'links')
             companies.set(value.organisasjonsnummer, value)
-
+            companiesByName.set(value.navn.replace(/\s/ig, '').toLowerCase(), value.organisasjonsnummer)
             if (counter % logInterval === 0) {
                 //await zip(companies.slice(0, 1000), r(CACHE_DIR, 'sample.json.gz'))
                 const now = Date.now()
@@ -222,8 +223,15 @@ export async function getCompany(organisasjonsnummer: string): Promise<NOCompany
     return companies.get(organisasjonsnummer)
 }
 
-export async function findCompany(query: string): Promise<NOCompany | null> {
+export async function findCompany(query: string, exact = false): Promise<NOCompany | null> {
     await init()
+    if (exact) {
+        const orgNo = companiesByName.get(query.replace(/\s/ig, '').toLowerCase())
+        if (!orgNo)
+            return null
+        return companies.get(orgNo) || null
+    }
+
     for (const [, company] of companies) {
         if (isMatch(query, company))
             return company

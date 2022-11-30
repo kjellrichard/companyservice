@@ -21,6 +21,6 @@ export declare function getCompanies({ verbose }?: VerboseParam): Promise<BrregD
 export declare function getRoles({ verbose }?: VerboseParam): Promise<BrregRoleDictionary>;
 export declare function getCompanyRoles(organisasjonsnummer: string): Promise<NORole[]>;
 export declare function getCompany(organisasjonsnummer: string): Promise<NOCompany | undefined>;
-export declare function findCompany(query: string): Promise<NOCompany | null>;
+export declare function findCompany(query: string, exact?: boolean): Promise<NOCompany | null>;
 export declare function searchCompanies(query: string): Promise<NOCompany[]>;
 export {};

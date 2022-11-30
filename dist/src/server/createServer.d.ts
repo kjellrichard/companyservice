@@ -1,2 +1,4 @@
-declare const _default: () => Promise<import("express-serve-static-core").Express>;
+declare const _default: ({ skipRoles }?: {
+    skipRoles?: boolean | undefined;
+}) => Promise<import("express-serve-static-core").Express>;
 export default _default;

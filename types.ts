@@ -17,6 +17,7 @@ export type NOCompany = {
         kode: string
         beskrivelse: string
     }
+    hjemmeside: string
     konkurs: boolean
     links: object[]
     maalform: string

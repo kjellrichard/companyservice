@@ -3,7 +3,7 @@ import { NOCompany } from '../../types'
 import { init, getCompany, findCompany, searchCompanies, initRoles, getCompanyRoles } from '../lib/brreg'
 
 const app = express()
-async function applyRoles(company:NOCompany):Promise<NOCompany> {
+async function applyRoles(company: NOCompany): Promise<NOCompany> {
     company.rollegrupper = await getCompanyRoles(company.organisasjonsnummer)
     return company
 }
@@ -23,12 +23,13 @@ app.get('/search', async (req: Request, res: Response) => {
 })
 
 app.get('/find', async (req: Request, res: Response) => {
-    const { query } = req.query
+    const { query, exact } = req.query
     const start = Date.now()
+
     if (!query)
         return res.status(400).send('Query is required.')
 
-    const company = await findCompany(query as string)
+    const company = await findCompany(query as string, /true|1/i.test(String(exact)))
     res.header('x-time-taken', `${Date.now() - start}`)
     if (company)
         return res
@@ -53,15 +54,13 @@ app.get('/no/:orgno', async (req: Request, res: Response) => {
             .send(`Company with id ${orgno} not found.`)
 })
 
-export default async () => {
+export default async ({ skipRoles = false }: { skipRoles?: boolean } = {}) => {
     const port = process.env.PORT || 3000
     const verbose = true
-    await init({verbose})
-    await initRoles({verbose})
-    //await Promise.all([
-    //    init({verbose}),
-    //    initRoles({verbose})
-    //])    
+    await init({ verbose })
+    if (!skipRoles)
+        await initRoles({ verbose })
+
     app.listen(port)
     console.log(`Listening on port ${port}`)
     return app

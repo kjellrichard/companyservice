@@ -1,19 +1,22 @@
+export declare type NOCompanyAddresse = {
+    adresse: string[];
+    kommune: string;
+    kommunenummer: string;
+    land: string;
+    landkode: string;
+    postnummer: string;
+    poststed: string;
+};
 export declare type NOCompany = {
     organisasjonsnummer: string;
     antallAnsatte: number;
-    forretningsadresse: {
-        adresse: string[];
-        kommune: string;
-        kommunenummer: string;
-        land: string;
-        landkode: string;
-        postnummer: string;
-        poststed: string;
-    };
+    forretningsadresse: NOCompanyAddresse;
+    postadresse?: NOCompanyAddresse;
     institusjonellSektorkode: {
         kode: string;
         beskrivelse: string;
     };
+    hjemmeside: string;
     konkurs: boolean;
     links: object[];
     maalform: string;
