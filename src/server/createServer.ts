@@ -55,13 +55,13 @@ app.get('/no/:orgno', async (req: Request, res: Response) => {
 })
 
 export default async ({ skipRoles = false }: { skipRoles?: boolean } = {}) => {
-    const port = process.env.PORT || 3000
+    const port = process.env.PORT || 9000
     const verbose = true
+    app.listen(port)
+    console.log(`Listening on port ${port}`)
     await init({ verbose })
     if (!skipRoles)
         await initRoles({ verbose })
-
-    app.listen(port)
-    console.log(`Listening on port ${port}`)
+    console.log('Data loaded. I\'m ready to serve :)')
     return app
 }
