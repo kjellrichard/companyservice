@@ -4,24 +4,23 @@
   "description": "Tool to get official and publicly accessible information about companies",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "commonjs",
   "devDependencies": {
-    "@types/chai": "^4.3.1",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.13",
-    "@types/mocha": "^9.1.1",
     "@types/node": "^18.6.2",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
-    "chai": "^4.3.6",
     "cpy": "^9.0.1",
     "eslint": "^8.20.0",
-    "mocha": "^10.0.0",
     "nyc": "^15.1.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.7.4"
+    "ts-node": "^10.9.2",
+    "typescript": "^4.7.4",
+    "vitest": "^3.0.5"
   },
   "scripts": {
-    "start": "node --max-old-space-size=6144 ./dist/server.js",
+    "start": "node --max-old-space-size=8192 ./dist/server.js",
+    "runWithoutRoles": "npm start skip-roles",
     "test": "mocha --exit --recursive ./dist/test/*",
     "build": "tsc",
     "watch": "npm run copyfiles && tsc --watch ",
@@ -40,6 +39,7 @@
   },
   "homepage": "https://github.com/kjellrichard/companyservice#readme",
   "dependencies": {
+    "@ricb/csv": "^1.4.0",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "node-fetch": "^3.2.9",

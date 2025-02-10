@@ -3,51 +3,55 @@ import { NOCompany } from '../../types'
 import { init, getCompany, findCompany, searchCompanies, initRoles, getCompanyRoles } from '../lib/brreg'
 
 const app = express()
-async function applyRoles(company: NOCompany): Promise<NOCompany> {
-    company.rollegrupper = await getCompanyRoles(company.organisasjonsnummer)
+let skipRoles = false
+function applyRoles(company: NOCompany): NOCompany {
+    if (skipRoles)
+        return company
+    company.rollegrupper = getCompanyRoles(company.organisasjonsnummer)
     return company
 }
-app.get('/search', async (req: Request, res: Response) => {
+
+app.get('/search', (req: Request, res: Response) => {
     const { query } = req.query
     const start = Date.now()
     if (!query)
         return res.status(400).send('Query is required.')
 
-    const companies = await searchCompanies(query as string)
+    const companies = searchCompanies(query as string)
     for (const company of companies)
-        await applyRoles(company)
+        applyRoles(company)
     return res
         .header('x-time-taken', `${Date.now() - start}`)
         .header('x-count', `${companies.length}`)
         .json(companies)
 })
 
-app.get('/find', async (req: Request, res: Response) => {
+app.get('/find', (req: Request, res: Response) => {
     const { query, exact } = req.query
     const start = Date.now()
 
     if (!query)
         return res.status(400).send('Query is required.')
 
-    const company = await findCompany(query as string, /true|1/i.test(String(exact)))
+    const company = findCompany(query as string, /true|1/i.test(String(exact)))
     res.header('x-time-taken', `${Date.now() - start}`)
     if (company)
         return res
-            .json(await applyRoles(company))
+            .json(applyRoles(company))
     else
         return res
             .status(404)
             .send(`Company with name ${query} not found.`)
 })
 
-app.get('/no/:orgno', async (req: Request, res: Response) => {
+app.get('/no/:orgno', (req: Request, res: Response) => {
     const orgno = req.params.orgno
-    const company = await getCompany(orgno)
+    const company = getCompany(orgno)
     const start = Date.now()
     if (company)
         res
             .header('x-time-taken', `${Date.now() - start}`)
-            .json(await applyRoles(company))
+            .json(applyRoles(company))
     else
         res
             .status(404)
@@ -57,11 +61,15 @@ app.get('/no/:orgno', async (req: Request, res: Response) => {
 export default async ({ skipRoles = false }: { skipRoles?: boolean } = {}) => {
     const port = process.env.PORT || 9000
     const verbose = true
-    app.listen(port)
     console.log(`Listening on port ${port}`)
+    app.listen(port)
     await init({ verbose })
     if (!skipRoles)
         await initRoles({ verbose })
+    else
+        skipRoles = true
+
     console.log('Data loaded. I\'m ready to serve :)')
+
     return app
 }

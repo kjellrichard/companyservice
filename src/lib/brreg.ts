@@ -19,8 +19,6 @@ const ALL_ROLES_FILENAME = resolve(CACHE_DIR, process.env.ALL_ROLES_FILENAME || 
 
 // https://data.brreg.no/enhetsregisteret/api/docs/index.html#enheter-lastned
 const ALL_UNITS_URL = 'https://data.brreg.no/enhetsregisteret/api/enheter/lastned'
-//const ALL_UNITS_URL = 'https://data.brreg.no/enhetsregisteret/oppslag/enheter/lastned'
-
 const ALL_ROLES_URL = 'https://data.brreg.no/enhetsregisteret/api/roller/totalbestand'
 
 type VerboseParam = {
@@ -46,24 +44,11 @@ async function downloadFile(url, filename): Promise<string> {
 
 export async function downloadUnitsFile(): Promise<string> {
     return downloadFile(ALL_UNITS_URL, ALL_UNITS_FILENAME)
-    /*
-    const file = createWriteStream(ALL_UNITS_FILENAME)
-    return new Promise((resolve, reject) => {
-        https.get(ALL_UNITS_URL, response => {
-            file.on('finish', () => {
-                file.close()
-                resolve(ALL_UNITS_FILENAME)
-            })
-            response.pipe(file)
-
-        })
-    })*/
 }
 
 export async function downloadRolesFile(): Promise<string> {
     return downloadFile(ALL_ROLES_URL, ALL_ROLES_FILENAME)
 }
-
 
 async function getFile({ verbose, url, filename }: VerboseParam & FileParam & { url: string }): Promise<string> {
     let exists = false
@@ -100,7 +85,6 @@ export async function unzipUnits({ filename, verbose }: VerboseParam & { filenam
     let counter = 0
     let lapStart = Date.now()
     const start = Date.now()
-    //const r = resolve
     return new Promise((resolve, reject) => {
         const stream = StreamArray.withParser()
         stream.on('data', async (data) => {
@@ -109,7 +93,6 @@ export async function unzipUnits({ filename, verbose }: VerboseParam & { filenam
             companies.set(value.organisasjonsnummer, value)
             companiesByName.set(value.navn.replace(/\s/ig, '').toLowerCase(), value.organisasjonsnummer)
             if (counter % logInterval === 0) {
-                //await zip(companies.slice(0, 1000), r(CACHE_DIR, 'sample.json.gz'))
                 const now = Date.now()
                 const avg = Math.floor((now - lapStart) / logInterval * 1000)
                 lapStart = now
@@ -213,18 +196,16 @@ export async function getRoles({ verbose }: VerboseParam = {}): Promise<BrregRol
     return roles
 }
 
-export async function getCompanyRoles(organisasjonsnummer: string): Promise<NORole[]> {
-    await initRoles()
+export function getCompanyRoles(organisasjonsnummer: string): NORole[] {
     return roles.get(organisasjonsnummer) || []
 }
 
-export async function getCompany(organisasjonsnummer: string): Promise<NOCompany | undefined> {
-    await init()
+export function getCompany(organisasjonsnummer: string): NOCompany | undefined {
     return companies.get(organisasjonsnummer)
 }
 
-export async function findCompany(query: string, exact = false): Promise<NOCompany | null> {
-    await init()
+export function findCompany(query: string, exact = false): NOCompany | null {
+
     if (exact) {
         const orgNo = companiesByName.get(query.replace(/\s/ig, '').toLowerCase())
         if (!orgNo)
@@ -243,8 +224,7 @@ function isMatch(query: string, company: NOCompany): boolean {
     return new RegExp(query, 'i').test(company.navn)
 }
 
-export async function searchCompanies(query: string): Promise<NOCompany[]> {
-    await init()
+export function searchCompanies(query: string): NOCompany[] {
     const result: NOCompany[] = []
     for (const [, company] of companies) {
         if (isMatch(query, company)) {
@@ -253,3 +233,4 @@ export async function searchCompanies(query: string): Promise<NOCompany[]> {
     }
     return result
 }
+
